@@ -1,4 +1,5 @@
 import mongoose from "mongoose"
+import { envVariables } from "@/validation/env/validation.env"
 
 interface Connection {
     isConnected?: number
@@ -13,7 +14,7 @@ export async function ConnectToDatabase() {
     }
 
     try {
-        const db = await mongoose.connect(process.env.MONGO_URI!)
+        const db = await mongoose.connect(envVariables.MONGODB_URI)
 
         connection.isConnected = db.connections[0].readyState
     } catch (error) {
