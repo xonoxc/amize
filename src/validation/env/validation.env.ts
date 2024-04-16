@@ -4,6 +4,7 @@ export const envSchema = z.object({
     RESEND_API_KEY: z.string(),
     MONGODB_URI: z.string(),
     APP_HOST_URL: z.string(),
+    NEXT_AUTH_SECRET: z.string(),
 })
 
 const env = envSchema.safeParse(process.env)
