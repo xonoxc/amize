@@ -14,7 +14,7 @@ export async function ConnectToDatabase() {
     }
 
     try {
-        const db = await mongoose.connect(envVariables.MONGODB_URI)
+        const db = await mongoose.connect(`${envVariables.MONGODB_URI}/amize`)
 
         connection.isConnected = db.connections[0].readyState
     } catch (error) {

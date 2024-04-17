@@ -1,9 +1,10 @@
 import { ConnectToDatabase } from "@/db/dbConnection"
 import User from "@/models/user"
-import { NextAuthOptions } from "next-auth"
+import { NextAuthOptions, Session } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
 import { envVariables } from "@/validation/env/validation.env"
+import { JWT } from "next-auth/jwt"
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -65,11 +66,11 @@ export const authOptions: NextAuthOptions = {
             return token
         },
 
-        async session({ session, token }) {
+        async session({ session, token }: { session: Session; token: JWT }) {
             if (token) {
                 session.user._id = token._id
+                session.user.isAcceptingMessage = token.isAcceptingMessage
                 session.user.isVerified = token.isVerified
-                session.user.isAcceptingMessages = token.isAcceptingMessages
                 session.user.username = token.username
             }
             return session
