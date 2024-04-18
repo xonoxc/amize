@@ -27,7 +27,7 @@ export default async function POST(
         if (!validationResult.success) {
             return response.status(400).json({
                 success: false,
-                message: validationResult.error?.message,
+                message: validationResult.error.message,
             })
         }
 
