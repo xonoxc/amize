@@ -4,103 +4,119 @@ import bcrypt from "bcryptjs"
 import { sendVericiationEmail } from "@/helpers/verication.email"
 import { signupSchema } from "@/validation/singupSchema"
 
-
 const generateSixDigitOtp = () => {
-	return Math.floor(100000 + Math.random() * 900000).toString()
+    return Math.floor(100000 + Math.random() * 900000).toString()
 }
 
 export async function POST(request: Request) {
-	await ConnectToDatabase()
-	try {
-		const { email, password, username } = await request.json()
+    await ConnectToDatabase()
+    try {
+        const { email, password, username } = await request.json()
 
-		const validationResult = signupSchema.safeParse({
-			email,
-			password,
-			username,
-		})
+        const validationResult = signupSchema.safeParse({
+            email,
+            password,
+            username,
+        })
 
-		if (!validationResult.success) {
-			return Response.json({
-				success: false,
-				message: validationResult.error.issues[0].message,
-			},
-				{ status: 400 }
-			)
-		}
+        if (!validationResult.success) {
+            return Response.json(
+                {
+                    success: false,
+                    message: validationResult.error.issues[0].message,
+                },
+                { status: 400 }
+            )
+        }
 
-		const existingVerifiedUser = await User.findOne({
-			username,
-			isVerified: true,
-		})
+        const existingVerifiedUser = await User.findOne({
+            username,
+            isVerified: true,
+        })
 
-		if (existingVerifiedUser) {
-			return Response.json({
-				success: false,
-				message: "username is already taken",
-			}, { status: 400 })
-		}
+        if (existingVerifiedUser) {
+            return Response.json(
+                {
+                    success: false,
+                    message: "username is already taken",
+                },
+                { status: 400 }
+            )
+        }
 
-		const existingUser = await User.findOne({ email })
+        const existingUser = await User.findOne({ email })
 
-		const otp = generateSixDigitOtp()
+        const otp = generateSixDigitOtp()
 
-		if (existingUser) {
-			if (existingUser.isVerified) {
-				return Response.json({
-					success: false,
-					message: "User already exists with this email",
-				}, { status: 400 })
-			} else {
-				const hashPassword = await bcrypt.hash(password, 10)
-				existingUser.password = hashPassword
-				existingUser.verificationCode = otp
-				existingUser.verificationExpiry = new Date(
-					Date.now() + 10 * 60 * 1000
-				)
+        console.log(otp)
 
-				await existingUser.save()
-			}
-		} else {
-			const hashedPassword = await bcrypt.hash(password, 10)
+        if (existingUser) {
+            if (existingUser.isVerified) {
+                return Response.json(
+                    {
+                        success: false,
+                        message: "User already exists with this email",
+                    },
+                    { status: 400 }
+                )
+            } else {
+                const hashPassword = await bcrypt.hash(password, 10)
+                existingUser.password = hashPassword
+                existingUser.verificationCode = otp
+                existingUser.verificationExpiry = new Date(
+                    Date.now() + 10 * 60 * 1000
+                )
 
-			const newUser = new User({
-				username,
-				email,
-				password: hashedPassword,
-				verificationCode: otp,
-				verificationExpiry: new Date(Date.now() + 10 * 60 * 1000),
-				isVerified: false,
-				messages: [],
-			})
+                await existingUser.save()
+            }
+        } else {
+            const hashedPassword = await bcrypt.hash(password, 10)
 
-			await newUser.save()
-		}
+            const newUser = new User({
+                username,
+                email,
+                password: hashedPassword,
+                verificationCode: otp,
+                verificationExpiry: new Date(Date.now() + 10 * 60 * 1000),
+                isVerified: false,
+                messages: [],
+            })
 
-		const emailStatus = await sendVericiationEmail({
-			username,
-			verificationCode: otp,
-			destination: email,
-		})
+            await newUser.save()
+        }
 
-		if (!emailStatus.success) {
-			return Response.json({
-				success: false,
-				message: emailStatus.message,
-			}, { status: 500 })
-		}
+        const emailStatus = await sendVericiationEmail({
+            username,
+            verificationCode: otp,
+            destination: email,
+        })
 
-		return Response.json({
-			success: true,
-			message: "User created successfully , Please verify your account!",
-		}, { status: 201 })
-	} catch (error) {
-		console.error(`Error registering user: ${error}`)
-		return Response.json({
-			success: false,
-			message: `Error Registering user : ${error}`,
-		},
-			{ status: 500 }
-		)
-	}
+        if (!emailStatus.success) {
+            return Response.json(
+                {
+                    success: false,
+                    message: emailStatus.message,
+                },
+                { status: 500 }
+            )
+        }
+
+        return Response.json(
+            {
+                success: true,
+                message:
+                    "User created successfully , Please verify your account!",
+            },
+            { status: 201 }
+        )
+    } catch (error) {
+        console.error(`Error registering user: ${error}`)
+        return Response.json(
+            {
+                success: false,
+                message: `Error Registering user : ${error}`,
+            },
+            { status: 500 }
+        )
+    }
 }
