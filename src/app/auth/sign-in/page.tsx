@@ -35,6 +35,7 @@ export default function LoginForm() {
             identifier: data.email,
             password: data.password,
         })
+        console.log("Result url", result?.url)
 
         if (result?.error) {
             if (result.error === "CredentialsSignin") {

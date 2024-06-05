@@ -4,56 +4,53 @@ import { NextAuthOptions, Session } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
 import { envVariables } from "@/validation/env/validation.env"
-import { JWT } from "next-auth/jwt"
 
 export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({
-            id: "credentails",
+            id: "credentials",
             name: "credentials",
-
             credentials: {
-                email: { label: "email", type: "text" },
-                password: { label: "password", type: "password" },
+                email: { label: "Email", type: "text" },
+                password: { label: "Password", type: "password" },
             },
-
-            async authorize(credentials): Promise<any> {
+            async authorize(credentials: any): Promise<any> {
                 await ConnectToDatabase()
 
                 try {
                     const user = await User.findOne({
-                        $or: [],
+                        $or: [
+                            { email: credentials.identifier },
+                            { password: credentials.password },
+                        ],
                     })
-
+                    console.log("User", user)
                     if (!user) {
-                        throw new Error("User not found with the given email")
+                        throw new Error("No user found with this email")
                     }
 
                     if (!user.isVerified) {
                         throw new Error(
-                            "Please verify  your email before trying to login "
+                            "Please verify your account before logging in"
                         )
                     }
 
-                    const isPasswordCorret = await bcrypt.compare(
-                        credentials?.password as string,
+                    const isPasswordCorrect = await bcrypt.compare(
+                        credentials.password,
                         user.password
                     )
 
-                    if (!isPasswordCorret) {
-                        throw new Error(
-                            "Incorrect password , try again with a correct password"
-                        )
+                    if (!isPasswordCorrect) {
+                        throw new Error("Incorrect Password")
                     }
 
                     return user
-                } catch (error: any) {
-                    throw new Error(error)
+                } catch (err: any) {
+                    throw new Error(err)
                 }
             },
         }),
     ],
-
     callbacks: {
         async jwt({ token, user }) {
             if (user) {
@@ -62,26 +59,26 @@ export const authOptions: NextAuthOptions = {
                 token.isAcceptingMessage = user.isAcceptingMessage
                 token.username = user.username
             }
-
+            console.log("Token", token)
             return token
         },
-
-        async session({ session, token }: { session: Session; token: JWT }) {
+        async session({ session, token }) {
             if (token) {
                 session.user._id = token._id
-                session.user.isAcceptingMessage = token.isAcceptingMessage
                 session.user.isVerified = token.isVerified
+                session.user.isAcceptingMessage = token.isAcceptingMessage
                 session.user.username = token.username
             }
+
+            console.log("session", session)
             return session
         },
     },
-
     session: {
         strategy: "jwt",
     },
     secret: envVariables.NEXT_AUTH_SECRET,
     pages: {
-        signIn: "sign-in",
+        signIn: "/auth/sign-in",
     },
 }

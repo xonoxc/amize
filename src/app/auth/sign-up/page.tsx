@@ -61,9 +61,6 @@ export default function LoginForm() {
         }
     }, [debouncedUsername])
 
-
-
-
     useEffect(() => {
         checkUniqueUsername()
     }, [debouncedUsername, checkUniqueUsername])
@@ -139,7 +136,7 @@ export default function LoginForm() {
                                         <p
                                             className={`text-sm ${
                                                 usernameMessage ===
-                                                "Username is unique"
+                                                "Username is valid and unique"
                                                     ? "text-green-500"
                                                     : "text-red-500"
                                             }`}

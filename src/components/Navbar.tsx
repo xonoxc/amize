@@ -5,13 +5,14 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { User } from "next-auth"
 import { useSession, signOut } from "next-auth/react"
+import { ModeToggle } from "@/components/ui/modeToggle"
 
 const NavBar = () => {
     const { data: session } = useSession()
     const user: User = session?.user as User
 
     return (
-        <nav className="p-4 md:p-6 shadow-md bg-gray-900 text-white">
+        <nav className="p-4 md:p-6 shadow-md dark:text-white">
             <div className="container mx-auto flex flex-col md:flex-row  justify-between items-center">
                 <a href="#" className="text-xl fond-bold mb-4 md:mb-0">
                     Amize
@@ -39,6 +40,10 @@ const NavBar = () => {
                         </Button>
                     </Link>
                 )}
+
+                <div className="toggle">
+                    <ModeToggle />
+                </div>
             </div>
         </nav>
     )

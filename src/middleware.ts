@@ -16,6 +16,8 @@ export const config = {
 export async function middleware(request: NextRequest) {
     const token = await getToken({ req: request })
 
+    console.log(token)
+
     const url = request.nextUrl
 
     if (
@@ -28,7 +30,7 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL("/admin/dashboard", request.url))
     }
 
-    if (!token && url.pathname.startsWith("/dashboard")) {
+    if (!token && url.pathname.startsWith("/admin/dashboard")) {
         return NextResponse.redirect(new URL("/auth/sign-in", request.url))
     }
 

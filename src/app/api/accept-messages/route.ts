@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/options"
 import { ConnectToDatabase } from "@/db/dbConnection"
 import UserModel, { User } from "@/models/user"
+import { ApiResponse } from "@/types/ApiResponse"
 
 export async function POST(req: Request) {
     await ConnectToDatabase()
@@ -93,7 +94,7 @@ export async function GET() {
         return Response.json(
             {
                 success: true,
-                messages: user.isAcceptingMessages,
+                isAcceptingMessages: user.isAcceptingMessages,
             },
             { status: 200 }
         )

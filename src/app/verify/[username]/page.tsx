@@ -29,10 +29,18 @@ export default function VerificationPage() {
 
     const onSubmit = async (data: z.infer<typeof verifySchema>) => {
         try {
-            const response = await axios.post<ApiResponse>(`/api/verify`, {
-                username: params.username,
-                code: data.code,
-            })
+            const response = await axios.post<ApiResponse>(
+                `/api/verify-code`,
+                {
+                    username: params.username,
+                    code: data.code,
+                },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            )
 
             toast({
                 title: "Success",

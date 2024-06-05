@@ -2,7 +2,6 @@ import { ConnectToDatabase } from "@/db/dbConnection"
 import User from "@/models/user"
 import bcrypt from "bcryptjs"
 import { sendVericiationEmail } from "@/helpers/verication.email"
-import { signupSchema } from "@/validation/singupSchema"
 
 const generateSixDigitOtp = () => {
     return Math.floor(100000 + Math.random() * 900000).toString()
@@ -13,21 +12,7 @@ export async function POST(request: Request) {
     try {
         const { email, password, username } = await request.json()
 
-        const validationResult = signupSchema.safeParse({
-            email,
-            password,
-            username,
-        })
-
-        if (!validationResult.success) {
-            return Response.json(
-                {
-                    success: false,
-                    message: validationResult.error.issues[0].message,
-                },
-                { status: 400 }
-            )
-        }
+        console.log(email, username, password)
 
         const existingVerifiedUser = await User.findOne({
             username,
@@ -47,8 +32,6 @@ export async function POST(request: Request) {
         const existingUser = await User.findOne({ email })
 
         const otp = generateSixDigitOtp()
-
-        console.log(otp)
 
         if (existingUser) {
             if (existingUser.isVerified) {
