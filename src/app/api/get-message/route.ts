@@ -23,34 +23,42 @@ export async function GET() {
 
     const userID = new mongoose.Types.ObjectId(_user._id)
     try {
-        const user = await userModel
-            .aggregate([
-                { $match: { _id: userID } },
-                { $unwind: "$messages" },
-                { $sort: { "messages.createdAt": -1 } },
-                { $group: { _id: "$_id", messages: { $push: "$messages" } } },
-            ])
-            .exec()
+        const userMessages = await userModel.aggregate([
+            { $match: { _id: userID } },
+            { $unwind: "$messages" },
+            { $sort: { "messages.createdAt": -1 } },
+            { $group: { _id: "$_id", messages: { $push: "$messages" } } },
+        ])
 
-        if (!user || user.length === 0) {
+        if (!userMessages) {
             return Response.json(
                 {
-                    success: false,
-                    message: "User not found",
+                    success: true,
+                    messages: "user not found",
                 },
                 { status: 404 }
+            )
+        }
+
+        if (userMessages.length === 0) {
+            return Response.json(
+                {
+                    success: true,
+                    messages: userMessages,
+                },
+                { status: 200 }
             )
         }
 
         return Response.json(
             {
                 success: true,
-                data: user[0].messages,
+                messages: userMessages[0].messages,
             },
             { status: 200 }
         )
     } catch (error) {
-        console.error("An unexpected error occurred", error)
+        console.error("An unexpected error occurred", error.message)
         return Response.json(
             {
                 message: "Internal Server Errror",

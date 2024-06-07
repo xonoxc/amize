@@ -1,6 +1,6 @@
 import { ConnectToDatabase } from "@/db/dbConnection"
 import User from "@/models/user"
-import { NextAuthOptions, Session } from "next-auth"
+import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
 import { envVariables } from "@/validation/env/validation.env"
@@ -19,12 +19,8 @@ export const authOptions: NextAuthOptions = {
 
                 try {
                     const user = await User.findOne({
-                        $or: [
-                            { email: credentials.identifier },
-                            { password: credentials.password },
-                        ],
+                        email: credentials.email,
                     })
-                    console.log("User", user)
                     if (!user) {
                         throw new Error("No user found with this email")
                     }
@@ -39,6 +35,8 @@ export const authOptions: NextAuthOptions = {
                         credentials.password,
                         user.password
                     )
+
+                    console.log("isPasswordCorrect", isPasswordCorrect)
 
                     if (!isPasswordCorrect) {
                         throw new Error("Incorrect Password")
@@ -59,7 +57,6 @@ export const authOptions: NextAuthOptions = {
                 token.isAcceptingMessage = user.isAcceptingMessage
                 token.username = user.username
             }
-            console.log("Token", token)
             return token
         },
         async session({ session, token }) {
@@ -70,7 +67,6 @@ export const authOptions: NextAuthOptions = {
                 session.user.username = token.username
             }
 
-            console.log("session", session)
             return session
         },
     },

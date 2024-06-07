@@ -1,5 +1,3 @@
-"use client"
-
 import React from "react"
 import axios, { AxiosError } from "axios"
 import dayjs from "dayjs"

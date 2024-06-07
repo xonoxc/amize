@@ -7,10 +7,10 @@ import { CardHeader, CardContent, Card } from "@/components/ui/card"
 import { Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import axios, { AxiosError } from "axios"
-import { useCompletion } from "ai/react"
 import { Separator } from "@/components/ui/separator"
 import { useForm } from "react-hook-form"
 import { messageSchema } from "@/validation/messageSchema"
+import { useCompletion } from "ai/react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ApiResponse } from "@/types/ApiResponse"
 import { useToast } from "@/components/ui/use-toast"
@@ -30,6 +30,10 @@ const specialChar = "||"
 const initialMessageString =
     "What's your favorite movie?||Do you have any pets?||What's your dream job?"
 
+const parseStringMessages = (messageString: string): string[] => {
+    return messageString.replace(/^"|"$/g, "").split(specialChar)
+}
+
 export default function SendMessage() {
     const { toast } = useToast()
     const params = useParams()
@@ -39,8 +43,8 @@ export default function SendMessage() {
     const {
         complete,
         completion,
-        isLoading: isSuggestingMessage,
         error,
+        isLoading: isSuggestingMessages,
     } = useCompletion({
         api: "/api/suggest-message",
         initialCompletion: initialMessageString,
@@ -60,7 +64,7 @@ export default function SendMessage() {
         setIsLoading(true)
         try {
             const response = await axios.post<ApiResponse>(
-                "/api/send_message",
+                "/api/send-message",
                 {
                     ...data,
                     username,
@@ -91,22 +95,13 @@ export default function SendMessage() {
     const fetchMessageSuggestions = async () => {
         try {
             complete("")
-        } catch (err) {
-            console.error("Error fetching message suggestions", err)
-
+        } catch (error: any) {
             toast({
                 title: "Error",
-                description: "Unable to fetch message suggestions",
+                description: error.message,
                 variant: "destructive",
             })
         }
-    }
-
-    const parseStringMessages = (str: string): string[] => {
-        return str
-            .split(specialChar)
-            .map((message) => message.trim())
-            .filter((message) => message.length > 0)
     }
 
     return (
@@ -161,7 +156,7 @@ export default function SendMessage() {
                     <Button
                         onClick={fetchMessageSuggestions}
                         className="my-4"
-                        disabled={isSuggestingMessage}
+                        disabled={isSuggestingMessages}
                     >
                         Suggest Messages
                     </Button>
@@ -174,14 +169,14 @@ export default function SendMessage() {
                 </CardHeader>
                 <CardContent className="flex flex-col space-y-4">
                     {error ? (
-                        <p className="text-red-500">{error.message}</p>
+                        <p className="text-red-500">{error?.message}</p>
                     ) : (
                         parseStringMessages(completion).map(
                             (message, index) => (
                                 <Button
                                     key={index}
                                     variant="outline"
-                                    className="mb-2"
+                                    className="mb-2 dark:bg-white bg-black dark:text-black text-white"
                                     onClick={() => handleMessageClick(message)}
                                 >
                                     {message}

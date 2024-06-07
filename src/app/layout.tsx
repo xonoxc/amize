@@ -1,12 +1,14 @@
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import localFont from "next/font/local"
 import { Toaster } from "@/components/ui/toaster"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import React from "react"
 import { AuthProvider } from "@/context/AuthProvider"
 
-const inter = Inter({ subsets: ["latin"] })
+const sfpro = localFont({
+    src: "../../public/fonts/sf-pro-display_regular.woff2",
+})
 
 export const metadata: Metadata = {
     title: "Amize",
@@ -21,11 +23,11 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
     return (
         <html lang="en">
-            <body className={inter.className}>
+            <body className={sfpro.className}>
                 <AuthProvider>
                     <ThemeProvider
                         attribute="class"
-                        defaultTheme="system"
+                        defaultTheme="dark"
                         enableSystem
                         disableTransitionOnChange
                     >

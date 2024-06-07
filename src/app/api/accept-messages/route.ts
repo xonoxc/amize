@@ -2,7 +2,6 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/options"
 import { ConnectToDatabase } from "@/db/dbConnection"
 import UserModel, { User } from "@/models/user"
-import { ApiResponse } from "@/types/ApiResponse"
 
 export async function POST(req: Request) {
     await ConnectToDatabase()
@@ -21,13 +20,13 @@ export async function POST(req: Request) {
     }
 
     const userId = user._id
-    const { acceptMessages } = await req.json()
+    const { acceptMessage } = await req.json()
 
     try {
         const updatedUser = await UserModel.findByIdAndUpdate(
             userId,
             {
-                isAcceptingMessages: acceptMessages,
+                isAcceptingMessages: acceptMessage,
             },
             { new: true }
         )
@@ -47,6 +46,7 @@ export async function POST(req: Request) {
             {
                 success: true,
                 message: "User updated successfully",
+                isAcceptingMessages: updatedUser.isAcceptingMessages,
             },
             { status: 200 }
         )
@@ -94,7 +94,7 @@ export async function GET() {
         return Response.json(
             {
                 success: true,
-                isAcceptingMessages: user.isAcceptingMessages,
+                isAcceptingMessages: foundUser.isAcceptingMessages,
             },
             { status: 200 }
         )

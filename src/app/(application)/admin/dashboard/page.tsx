@@ -1,4 +1,5 @@
 "use client"
+
 import axios, { AxiosError } from "axios"
 import { User } from "next-auth"
 import { Loader2, RefreshCcw } from "lucide-react"
@@ -42,8 +43,7 @@ export default function DashBoard(): JSX.Element {
             const { data } = await axios.get<ApiResponse>(
                 "/api/accept-messages"
             )
-
-            setValue("acceptMessage", data.isAcceptingMessage)
+            setValue("acceptMessage", data.isAcceptingMessages)
         } catch (error) {
             const axiosError = error as AxiosError<ApiResponse>
             toast({
@@ -62,11 +62,10 @@ export default function DashBoard(): JSX.Element {
         async (refresh: boolean = false) => {
             setIsLoading(false)
             setIsSiwtchLoading(false)
-
             try {
-                const response = await axios.get("/api/get-message")
+                const { data } = await axios.get("/api/get-message")
 
-                setMessages(response.data || [])
+                setMessages(data.messages || [])
 
                 if (refresh) {
                     toast({
@@ -142,7 +141,7 @@ export default function DashBoard(): JSX.Element {
     }
 
     return (
-        <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
+        <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6  rounded w-full max-w-6xl">
             <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
 
             <div className="mb-4">

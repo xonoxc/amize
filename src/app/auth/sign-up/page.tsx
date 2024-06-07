@@ -102,7 +102,7 @@ export default function LoginForm() {
             <div className="w-full max-w-md p-8 space-y-8  ">
                 <div className="text-center">
                     <h1 className="text-xl font-extrabold tracking-tight lg:text-2xl mb-6">
-                        <span className="text-6xl text-orange-300 mr-2">
+                        <span className="text-6xl text-[#d5b9b2] mr-2">
                             Create
                         </span>{" "}
                         An Account
@@ -197,7 +197,7 @@ export default function LoginForm() {
                 <div className="text-center mt-4">
                     <p>
                         don't have an account ?{" "}
-                        <Link href="/auth/sign-in" className="text-orange-300">
+                        <Link href="/auth/sign-in" className="text-[#d5b9b2]">
                             Sign in
                         </Link>
                     </p>

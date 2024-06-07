@@ -30,31 +30,22 @@ export default function LoginForm() {
     })
 
     const onSubmit = async (data: z.infer<typeof signInSchema>) => {
-        const result = await signIn("credentials", {
-            redirect: false,
-            identifier: data.email,
-            password: data.password,
-        })
-        console.log("Result url", result?.url)
+        try {
+            const result = await signIn("credentials", {
+                redirect: false,
+                email: data.email,
+                password: data.password,
+            })
 
-        if (result?.error) {
-            if (result.error === "CredentialsSignin") {
-                toast({
-                    title: "Login Failed!",
-                    description: "Incorrect username or password",
-                    variant: "destructive",
-                })
-            } else {
-                toast({
-                    title: "Login Failed!",
-                    description: result.error,
-                    variant: "destructive",
-                })
+            if (result?.status === 200) {
+                router.replace("/admin/dashboard")
             }
-        }
-
-        if (result?.url) {
-            router.replace("/admin/dashboard")
+        } catch (error: any) {
+            toast({
+                title: "Error",
+                description: error.message || "Unkown error occured",
+                variant: "destructive",
+            })
         }
     }
 
@@ -63,7 +54,7 @@ export default function LoginForm() {
             <div className="w-full max-w-md p-8 space-y-8  ">
                 <div className="text-center">
                     <h1 className="text-xl font-extrabold tracking-tight lg:text-xl  mb-6">
-                        <span className="text-6xl text-orange-300 mr-2">
+                        <span className="text-6xl text-[#d5b9b2] mr-2">
                             Welcome
                         </span>{" "}
                         Back !
@@ -107,7 +98,7 @@ export default function LoginForm() {
                 <div className="text-center mt-4">
                     <p>
                         Not a member yet?{" "}
-                        <Link href="/auth/sign-up" className="text-orange-300 ">
+                        <Link href="/auth/sign-up" className="text-[#d5b9b2]">
                             Sign up
                         </Link>
                     </p>

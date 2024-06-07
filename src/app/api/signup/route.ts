@@ -33,6 +33,8 @@ export async function POST(request: Request) {
 
         const otp = generateSixDigitOtp()
 
+        console.log(otp)
+
         if (existingUser) {
             if (existingUser.isVerified) {
                 return Response.json(
