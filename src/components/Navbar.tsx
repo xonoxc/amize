@@ -24,32 +24,34 @@ const NavBar = () => {
                     </span>
                     Amize
                 </a>
-                {session ? (
-                    <>
-                        <span className="mr-4">
-                            Welcome , {user.username || user.email}
-                        </span>
-                        <Button
-                            onClick={() => signOut()}
-                            className="w-full md:w-auto bg-slate-100 text-black"
-                            variant={"outline"}
-                        >
-                            Logout
-                        </Button>
-                    </>
-                ) : (
-                    <Link href={"/auth/sign-in"}>
-                        <Button
-                            className="w-full md:w-auto bg-slate-100 text-black"
-                            variant={"outline"}
-                        >
-                            Login
-                        </Button>
-                    </Link>
-                )}
+                <div className="session flex items-center justify-around gap-2">
+                    {session ? (
+                        <>
+                            <span className="mr-4">
+                                Welcome , {user.username || user.email}
+                            </span>
+                            <Button
+                                onClick={() => signOut()}
+                                className="w-full md:w-auto bg-slate-100 text-black"
+                                variant={"outline"}
+                            >
+                                Logout
+                            </Button>
+                        </>
+                    ) : (
+                        <Link href={"/auth/sign-in"}>
+                            <Button
+                                className="w-full font-bold md:w-auto bg-slate-100 text-black"
+                                variant={"outline"}
+                            >
+                                Login
+                            </Button>
+                        </Link>
+                    )}
 
-                <div className="toggle">
-                    <ModeToggle />
+                    <div className="toggle">
+                        <ModeToggle />
+                    </div>
                 </div>
             </div>
         </nav>
