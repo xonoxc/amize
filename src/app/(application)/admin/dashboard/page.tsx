@@ -1,5 +1,4 @@
 "use client"
-
 import axios, { AxiosError } from "axios"
 import { User } from "next-auth"
 import { Loader2, RefreshCcw } from "lucide-react"
@@ -129,7 +128,7 @@ export default function DashBoard(): JSX.Element {
 
     const { username } = session.user as User
 
-    const baseUrl = `${window.location.protocol}//${window.location.host} `
+    const baseUrl = `${window.location.protocol}//${window.location.host}`
     const profile = `${baseUrl}/u/${username}`
 
     const copyToClipBoard = () => {

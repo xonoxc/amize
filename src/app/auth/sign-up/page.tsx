@@ -196,7 +196,7 @@ export default function LoginForm() {
                 </Form>
                 <div className="text-center mt-4">
                     <p>
-                        don't have an account ?{" "}
+                        don&apos;t have an account ?
                         <Link href="/auth/sign-in" className="text-[#d5b9b2]">
                             Sign in
                         </Link>

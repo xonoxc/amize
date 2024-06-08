@@ -57,7 +57,7 @@ export async function GET() {
             },
             { status: 200 }
         )
-    } catch (error) {
+    } catch (error: any) {
         console.error("An unexpected error occurred", error.message)
         return Response.json(
             {

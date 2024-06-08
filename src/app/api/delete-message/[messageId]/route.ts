@@ -9,12 +9,10 @@ interface RouteParams {
 }
 
 export async function DELETE(
-    request: Request,
+    _request: Request,
     { params }: { params: RouteParams }
 ) {
     const messageId = params.messageId
-
-    console.log("messageId", messageId)
 
     await ConnectToDatabase()
 
