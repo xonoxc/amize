@@ -75,7 +75,7 @@ export default function LoginForm() {
                 description: response.data.message,
             })
 
-            router.replace(`/verify/${username}`)
+            router.replace("/auth/sign-in")
 
             setIsSubmitting(false)
         } catch (error) {
