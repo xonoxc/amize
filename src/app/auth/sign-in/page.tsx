@@ -17,6 +17,7 @@ import { signInSchema } from "@/validation/signInSchema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useToast } from "@/components/ui/use-toast"
 import { useState } from "react"
+import { Loader2 } from "lucide-react"
 
 export default function LoginForm() {
 	const { toast } = useToast()
@@ -97,7 +98,13 @@ export default function LoginForm() {
 						/>
 						<Button className="w-full" type="submit">
 							{
-								isLoading ? "Signing in..." : "Sign In"
+								isLoading ? (
+									<>
+										<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+										Please wait
+									</>
+
+								) : "Sign In"
 							}
 						</Button>
 					</form>
