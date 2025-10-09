@@ -1,7 +1,7 @@
 "use client"
 import axios, { AxiosError } from "axios"
 import { User } from "next-auth"
-import { Loader2, RefreshCcw } from "lucide-react"
+import { Loader2, LogOut, RefreshCcw } from "lucide-react"
 import { MessageCard } from "@/components/MessageCard"
 import { Button } from "@/components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch"
 import { useToast } from "@/components/ui/use-toast"
 import { useCallback, useEffect, useState } from "react"
 import { Message } from "@/models/user"
-import { useSession } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
 import { ApiResponse } from "@/types/ApiResponse"
 import { useForm } from "react-hook-form"
 import { acceptMessageSchema } from "@/validation/acceptMessageSchema"
@@ -126,7 +126,7 @@ export default function DashBoard(): JSX.Element {
         return <div></div>
     }
 
-    const { username } = session.user as User
+    const { username, email } = session.user as User
 
     const baseUrl = `${window.location.protocol}//${window.location.host}`
     const profile = `${baseUrl}/u/${username}`
@@ -141,7 +141,21 @@ export default function DashBoard(): JSX.Element {
 
     return (
         <div className="my-8 sm:mx-4 md:mx-8 lg:mx-auto p-6  rounded w-full max-w-6xl">
-            <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
+            <div className="flex items-center justify-between mb-6 flex-col md:flex-row">
+                <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
+
+                <div>
+                    <span className="mr-4">Welcome , {username || email}</span>
+                    <Button
+                        onClick={() => signOut()}
+                        className="w-full md:w-auto bg-slate-100 text-black gap-2 rounded-lg"
+                        variant={"outline"}
+                    >
+                        <LogOut size={14} />
+                        Logout
+                    </Button>
+                </div>
+            </div>
 
             <div className="mb-4">
                 <h2 className="text-lg font-semibold mb-2">
